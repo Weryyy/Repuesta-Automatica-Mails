@@ -1,0 +1,31 @@
+[
+  {
+    "context": {
+      "email_text": "Hi John, please send the invoice for order #12345 to billing@company.com. Call me at 555-123-4567 if you have questions. Total amount is $1,250.00."
+    },
+    "expected": {
+      "email": ["billing@company.com"],
+      "phone": ["555-123-4567"],
+      "amount": ["$1,250.00"]
+    }
+  },
+  {
+    "context": {
+      "email_text": "Meeting scheduled for 12/25/2024. Please confirm at support@example.com or visit https://example.com/calendar"
+    },
+    "expected": {
+      "email": ["support@example.com"],
+      "url": ["https://example.com/calendar"],
+      "date": ["12/25/2024"]
+    }
+  },
+  {
+    "context": {
+      "email_text": "Payment of $5,000.00 was processed. Contact jane.doe@business.net for receipt."
+    },
+    "expected": {
+      "email": ["jane.doe@business.net"],
+      "amount": ["$5,000.00"]
+    }
+  }
+]
