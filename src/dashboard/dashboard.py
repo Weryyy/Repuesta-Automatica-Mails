@@ -2,6 +2,9 @@
 Dashboard - Web interface for the email automation system using Panel (holoviz).
 """
 import panel as pn
+import pandas as pd
+import holoviews as hv
+from holoviews import opts
 from typing import Dict, Any
 from ..scenarios import EmailToExcelScenario
 from ..scenarios.email_to_drive_scenario import EmailToDriveScenario
@@ -115,6 +118,7 @@ class Dashboard:
         self.status_pane = pn.pane.Markdown("### Estado\nListo para ejecutar.")
         self.log_pane = pn.pane.JSON({}, name='Registro de Ejecución', depth=2)
         self.result_pane = pn.pane.Markdown("### Resultado\nNo se ha ejecutado ningún escenario aún.")
+        self.metrics_pane = pn.Column(pn.pane.Markdown("### Métricas\nEjecuta un escenario para ver estadísticas."))
         
         # Watch for scenario changes
         self.scenario_select.param.watch(self._update_scenario_fields, 'value')
@@ -282,10 +286,100 @@ class Dashboard:
             # Update log
             self.log_pane.object = self.execution_result['logs']
             
+            # Update metrics if we have emails
+            self._update_metrics()
+            
         except Exception as e:
             self.status_pane.object = f"### Estado\n❌ Error: {str(e)}"
             self.result_pane.object = f"### Resultado\nError durante la ejecución: {str(e)}"
     
+    def _update_metrics(self):
+        """Update the metrics dashboard based on processed emails."""
+        try:
+            # Get emails from the filter agent
+            emails = []
+            if hasattr(self.scenario, 'email_filter'):
+                emails = self.scenario.email_filter.output
+            
+            if not emails or not isinstance(emails, list):
+                self.metrics_pane.clear()
+                self.metrics_pane.append(pn.pane.Markdown("### Métricas\nNo hay datos suficientes para generar métricas."))
+                return
+
+            # Categorize emails
+            categories = {
+                'Facturas/Pagos': ['factura', 'invoice', 'pago', 'bill', 'receipt', 'boleta'],
+                'Pedidos/Compras': ['pedido', 'order', 'confirmación', 'purchase', 'shipping', 'envío'],
+                'Seguridad': ['security', 'seguridad', 'password', 'login', 'alerta', 'alert', 'verify', 'google'],
+                'Soporte/Ayuda': ['soporte', 'support', 'ayuda', 'ticket'],
+            }
+
+            counts = {cat: 0 for cat in categories}
+            counts['Otros'] = 0
+
+            for email_data in emails:
+                subject = email_data.get('subject', '').lower()
+                body = email_data.get('body', '').lower()
+                text = f"{subject} {body}"
+                
+                found = False
+                for cat, keywords in categories.items():
+                    if any(kw in text for kw in keywords):
+                        counts[cat] += 1
+                        found = True
+                        break
+                
+                if not found:
+                    counts['Otros'] += 1
+
+            # Create DataFrame
+            df = pd.DataFrame([
+                {'Tema': k, 'Cantidad': v} for k, v in counts.items() if v > 0
+            ])
+
+            if df.empty:
+                self.metrics_pane.clear()
+                self.metrics_pane.append(pn.pane.Markdown("### Métricas\nNo se detectaron temas específicos en los correos."))
+                return
+
+            # Calculate percentages
+            total = df['Cantidad'].sum()
+            df['Porcentaje'] = (df['Cantidad'] / total * 100).round(1)
+
+            # Create Layout
+            self.metrics_pane.clear()
+            self.metrics_pane.append(pn.pane.Markdown(f"### Análisis de {total} correos procesados"))
+
+            # Create table
+            table = pn.widgets.DataFrame(df, name='Resumen por Temas', width=400)
+            
+            # Create indicators
+            indicators = pn.Row()
+            for _, row in df.iterrows():
+                indicators.append(pn.indicators.Number(
+                    name=row['Tema'], value=row['Cantidad'], format='{value}',
+                    font_size='20pt', title_size='12pt', width=150
+                ))
+
+            # Create Pie Chart using Holoviews
+            hv.extension('bokeh')
+            pie_chart = hv.Bars(df, 'Tema', 'Cantidad').opts(
+                title="Distribución de Correos por Tema",
+                xlabel="Tema", ylabel="Cantidad",
+                color='Tema', cmap='Category20',
+                width=600, height=400,
+                tools=['hover'], show_legend=False
+            )
+            
+            self.metrics_pane.extend([
+                indicators,
+                pn.Row(table, pn.pane.HoloViews(pie_chart))
+            ])
+
+        except Exception as e:
+            self.metrics_pane.clear()
+            self.metrics_pane.append(pn.pane.Markdown(f"### Error en Métricas\n{str(e)}"))
+
     def create_layout(self):
         """Create the dashboard layout."""
         # Header
@@ -365,7 +459,8 @@ class Dashboard:
         tabs = pn.Tabs(
             ('📚 Plantillas', templates_tab),
             ('🎬 Escenarios', scenarios_tab),
-            ('🔌 Conexiones', connections_tab)
+            ('� Métricas', self.metrics_pane),
+            ('�🔌 Conexiones', connections_tab)
         )
         
         # Main layout

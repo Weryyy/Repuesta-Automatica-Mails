@@ -1,0 +1,445 @@
+{
+    "name": "Integration Google Calendar",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-calendar:searchEvents",
+            "version": 5,
+            "parameters": {
+                "__IMTCONN__": 5160577
+            },
+            "mapper": {
+                "calendar": "jm.monteserin.aguilera@gmail.com",
+                "timeMin": "{{now}}",
+                "timeMax": "{{addDays(now; 14)}}",
+                "singleEvents": false,
+                "eventTypes": [
+                    "default",
+                    "fromGmail",
+                    "focusTime",
+                    "outOfOffice",
+                    "workingLocation"
+                ],
+                "limit": "10"
+            },
+            "metadata": {
+                "designer": {
+                    "x": -92,
+                    "y": 14
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "Mi primera automatización (jm.monteserin.aguilera@gmail.com)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "calendar": {
+                            "mode": "chose",
+                            "label": "jm.monteserin.aguilera@gmail.com (Primary Calendar)"
+                        },
+                        "eventTypes": {
+                            "mode": "chose"
+                        },
+                        "orderBy": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "calendar",
+                        "type": "select",
+                        "label": "Calendar ID",
+                        "required": true
+                    },
+                    {
+                        "name": "timeMin",
+                        "type": "date",
+                        "label": "Start Date",
+                        "time": true
+                    },
+                    {
+                        "name": "timeMax",
+                        "type": "date",
+                        "label": "End Date",
+                        "time": true
+                    },
+                    {
+                        "name": "updatedMin",
+                        "type": "date",
+                        "label": "Updated from",
+                        "time": true
+                    },
+                    {
+                        "name": "singleEvents",
+                        "type": "boolean",
+                        "label": "Single Events",
+                        "required": true
+                    },
+                    {
+                        "name": "q",
+                        "type": "text",
+                        "label": "Query"
+                    },
+                    {
+                        "name": "eventTypes",
+                        "type": "select",
+                        "label": "Event Types",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "default",
+                                "fromGmail",
+                                "focusTime",
+                                "outOfOffice",
+                                "workingLocation"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order By",
+                        "validate": {
+                            "enum": [
+                                "startTime",
+                                "updated"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "util:TextAggregator",
+            "version": 1,
+            "parameters": {
+                "rowSeparator": "",
+                "feeder": 1
+            },
+            "mapper": {
+                "value": "{{1.summary}}</br> {{1.start}} - {{1.end}}</br>{{1.location}}</br> </br> </br> "
+            },
+            "metadata": {
+                "designer": {
+                    "x": 208,
+                    "y": 14
+                },
+                "restore": {
+                    "parameters": {
+                        "rowSeparator": {
+                            "label": "Empty"
+                        }
+                    },
+                    "extra": {
+                        "feeder": {
+                            "label": "Google Calendar - Search Events [1]"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "rowSeparator",
+                        "type": "select",
+                        "label": "Row separator",
+                        "validate": {
+                            "enum": [
+                                "\n",
+                                "\t",
+                                "other"
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Text"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "email:ActionSendEmail",
+            "version": 7,
+            "parameters": {
+                "account": 5161209,
+                "saveAfterSent": false
+            },
+            "mapper": {
+                "to": [
+                    "jm.monteserin.aguilera@gmail.com"
+                ],
+                "subject": "Resumen Semanal de reuniones",
+                "contentType": "html",
+                "attachments": [],
+                "cc": [],
+                "bcc": [],
+                "from": "",
+                "sender": "",
+                "replyTo": "",
+                "inReplyTo": "",
+                "references": [],
+                "priority": "normal",
+                "headers": [],
+                "html": "{{2.text}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 508,
+                    "y": 14
+                },
+                "restore": {
+                    "parameters": {
+                        "account": {
+                            "label": "Calendario resumen (MasterIAJose@outlook.com)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "microsoft-smtp-imap"
+                            }
+                        },
+                        "saveAfterSent": {
+                            "label": "No"
+                        }
+                    },
+                    "expect": {
+                        "to": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "contentType": {
+                            "label": "HTML"
+                        },
+                        "attachments": {
+                            "mode": "chose"
+                        },
+                        "cc": {
+                            "mode": "chose"
+                        },
+                        "bcc": {
+                            "mode": "chose"
+                        },
+                        "references": {
+                            "mode": "chose"
+                        },
+                        "priority": {
+                            "label": "Normal"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "account",
+                        "type": "account:smtp,google-restricted,microsoft-smtp-imap",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "saveAfterSent",
+                        "type": "select",
+                        "label": "Save message after sending",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "type": "hidden"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "to",
+                        "type": "array",
+                        "label": "To",
+                        "required": true,
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address",
+                            "required": true
+                        }
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Content Type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "html",
+                                "text"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "attachments",
+                        "type": "array",
+                        "label": "Attachments",
+                        "spec": [
+                            {
+                                "name": "fileName",
+                                "label": "File name",
+                                "type": "filename",
+                                "required": true,
+                                "semantic": "file:name"
+                            },
+                            {
+                                "name": "data",
+                                "label": "Data",
+                                "type": "buffer",
+                                "required": true,
+                                "semantic": "file:data"
+                            },
+                            {
+                                "name": "cid",
+                                "label": "Content-ID",
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "cc",
+                        "type": "array",
+                        "label": "Copy recipient",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address"
+                        }
+                    },
+                    {
+                        "name": "bcc",
+                        "type": "array",
+                        "label": "Blind copy recipient",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "text",
+                        "label": "From"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "text",
+                        "label": "Sender"
+                    },
+                    {
+                        "name": "replyTo",
+                        "type": "text",
+                        "label": "Reply-To"
+                    },
+                    {
+                        "name": "inReplyTo",
+                        "type": "text",
+                        "label": "In-Reply-To"
+                    },
+                    {
+                        "name": "references",
+                        "type": "array",
+                        "label": "References",
+                        "spec": {
+                            "type": "text",
+                            "label": "Reference",
+                            "required": true,
+                            "name": "value"
+                        }
+                    },
+                    {
+                        "name": "priority",
+                        "type": "select",
+                        "label": "Priority",
+                        "validate": {
+                            "enum": [
+                                "high",
+                                "normal",
+                                "low"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "type": "array",
+                        "label": "Headers",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "label": "Key",
+                                "type": "text",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "label": "Value",
+                                "type": "text",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "html",
+                        "type": "text",
+                        "label": "Content"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
