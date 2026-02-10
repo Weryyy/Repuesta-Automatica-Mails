@@ -7,11 +7,14 @@ App basada en el concepto de make.com para automatizar la lectura, filtrado y pr
 - **Dashboard Web Interactivo**: Interfaz gráfica usando Panel (Holoviz) accesible desde el navegador
 - **Sistema de Plantillas**: Plantillas predefinidas estilo Make.com listas para usar
 - **Arquitectura de Agentes**: Sistema modular con múltiples agentes especializados
+- **Skills (Habilidades)**: Agentes con habilidades entreñables y mejorables
 - **Orquestador por Escenario**: Gestión inteligente de flujos de trabajo
 - **Gestor de Conexiones**: Gestiona credenciales para múltiples servicios de forma segura
 - **Webhooks**: Comunica con sistemas externos mediante HTTP
 - **Integraciones IA**: OpenAI, Anthropic Claude, Google Gemini y modelos locales
 - **Google Drive**: Sube archivos directamente a Drive
+- **⚡ HPC (High-Performance Computing)**: Optimizaciones con RAPIDS, CUDA, XGBoost, xarray
+- **Procesamiento Paralelo**: Multi-threading y multi-processing automático
 - **Escenarios Configurables**: Flujos de automatización personalizables según tus necesidades
 
 ## 📚 Plantillas Disponibles
@@ -43,6 +46,7 @@ App basada en el concepto de make.com para automatizar la lectura, filtrado y pr
 ### Requisitos Previos
 - Python 3.8 o superior
 - pip (gestor de paquetes de Python)
+- (Opcional) NVIDIA GPU con CUDA para aceleración HPC
 
 ### Pasos de Instalación
 
@@ -57,7 +61,12 @@ cd Repuesta-Automatica-Mails
 pip install -r requirements.txt
 ```
 
-3. (Opcional) Configura tus credenciales:
+3. (Opcional) Verifica configuración HPC:
+```bash
+python hpc_info.py
+```
+
+4. (Opcional) Configura tus credenciales:
 ```bash
 cp .env.example .env
 # Edita .env con tus credenciales
