@@ -1,0 +1,38 @@
+[
+  {
+    "context": {
+      "subject": "Urgent: Server Down",
+      "body": "The production server crashed. Need immediate assistance ASAP!"
+    },
+    "expected": {
+      "category": "urgent"
+    }
+  },
+  {
+    "context": {
+      "subject": "Invoice #12345",
+      "body": "Please find attached the invoice for this month's services."
+    },
+    "expected": {
+      "category": "invoice"
+    }
+  },
+  {
+    "context": {
+      "subject": "Help needed with login",
+      "body": "I can't access my account. Getting an error message."
+    },
+    "expected": {
+      "category": "support"
+    }
+  },
+  {
+    "context": {
+      "subject": "Special Offer - 50% OFF",
+      "body": "Limited time sale! Get 50% discount on all products."
+    },
+    "expected": {
+      "category": "sales"
+    }
+  }
+]

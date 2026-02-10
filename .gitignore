@@ -31,6 +31,9 @@ ENV/
 # Connections (contains credentials)
 connections.json
 
+# Skills data (training progress)
+skills_data/
+
 # Output files
 output/
 *.xlsx
