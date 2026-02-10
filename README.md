@@ -1,13 +1,42 @@
 # 📧 Sistema de Automatización de Correos
 
-App basada en el concepto de make.com para automatizar la lectura, filtrado y procesamiento de correos electrónicos.
+App basada en el concepto de make.com para automatizar la lectura, filtrado y procesamiento de correos electrónicos con integración de IA, webhooks y múltiples servicios.
 
 ## 🎯 Características
 
 - **Dashboard Web Interactivo**: Interfaz gráfica usando Panel (Holoviz) accesible desde el navegador
+- **Sistema de Plantillas**: Plantillas predefinidas estilo Make.com listas para usar
 - **Arquitectura de Agentes**: Sistema modular con múltiples agentes especializados
 - **Orquestador por Escenario**: Gestión inteligente de flujos de trabajo
+- **Gestor de Conexiones**: Gestiona credenciales para múltiples servicios de forma segura
+- **Webhooks**: Comunica con sistemas externos mediante HTTP
+- **Integraciones IA**: OpenAI, Anthropic Claude, Google Gemini y modelos locales
+- **Google Drive**: Sube archivos directamente a Drive
 - **Escenarios Configurables**: Flujos de automatización personalizables según tus necesidades
+
+## 📚 Plantillas Disponibles
+
+### 📊 Email
+- **Email to Excel**: Lee y filtra correos, exporta a Excel
+- **Email to Webhook**: Envía correos filtrados a un webhook
+
+### ☁️ Integración
+- **Email to Google Drive**: Exporta correos a Google Drive
+- **Email to Webhook**: Notifica sistemas externos
+
+### 🤖 IA
+- **Email AI Summary**: Resumen inteligente de correos con IA
+- **AI Email Classification**: Clasifica correos automáticamente con IA
+
+## 🔌 Conexiones Soportadas
+
+- **Email (IMAP)**: Gmail, Outlook, y otros servidores IMAP
+- **Google Drive**: Almacenamiento en la nube
+- **Webhooks**: Integración con cualquier API HTTP
+- **OpenAI**: GPT-3.5, GPT-4
+- **Anthropic**: Claude 3 (Sonnet, Opus)
+- **Google Gemini**: Gemini Pro
+- **Modelos Locales**: Ollama, LM Studio (próximamente)
 
 ## 🚀 Instalación
 
@@ -90,14 +119,31 @@ Este escenario:
 
 ## 📝 Ejemplo de Uso
 
+### Opción 1: Usar Plantillas (Recomendado)
+
 1. Abre el dashboard (`python main.py`)
-2. Selecciona el escenario "Email a Excel"
-3. Ingresa tus credenciales de correo
-4. (Opcional) Configura filtros:
-   - Palabras clave en el asunto
-   - Remitentes específicos
-5. Haz clic en "Ejecutar Escenario"
-6. Revisa el archivo Excel generado en la carpeta `output/`
+2. Ve a la pestaña "📚 Plantillas"
+3. Explora las plantillas disponibles
+4. Haz clic en "Usar esta plantilla"
+5. Configura las conexiones necesarias
+6. Haz clic en "Ejecutar Plantilla"
+
+### Opción 2: Escenarios Personalizados
+
+1. Ve a la pestaña "🔌 Conexiones"
+2. Crea conexiones para los servicios que usarás
+3. Ve a la pestaña "🎬 Escenarios"
+4. Selecciona un escenario y configura
+5. Ejecuta el escenario
+
+### Ejemplo: Exportar Facturas a Excel
+
+1. **Plantilla**: Email to Excel
+2. **Configuración**:
+   - Conexión de email o ingresa credenciales
+   - Filtrar por asunto: "factura, invoice"
+   - Máximo de correos: 50
+3. **Resultado**: Archivo Excel con facturas en `output/`
 
 ## 🔧 Desarrollo
 

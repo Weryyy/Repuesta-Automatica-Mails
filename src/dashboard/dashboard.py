@@ -8,6 +8,7 @@ from ..scenarios.email_to_drive_scenario import EmailToDriveScenario
 from ..scenarios.email_ai_analysis_scenario import EmailAIAnalysisScenario
 from ..utils.connection_manager import ConnectionManager
 from .connections_dashboard import ConnectionsDashboard
+from .templates_dashboard import TemplatesDashboard
 
 
 class Dashboard:
@@ -20,8 +21,9 @@ class Dashboard:
         # Initialize connection manager
         self.connection_manager = ConnectionManager()
         
-        # Initialize connections dashboard
+        # Initialize sub-dashboards
         self.connections_dashboard = ConnectionsDashboard(self.connection_manager)
+        self.templates_dashboard = TemplatesDashboard(self.connection_manager)
         
         self.scenario = None
         self.execution_result = None
@@ -356,8 +358,12 @@ class Dashboard:
         # Create connections tab
         connections_tab = self.connections_dashboard.create_layout()
         
+        # Create templates tab
+        templates_tab = self.templates_dashboard.create_layout()
+        
         # Create tabs
         tabs = pn.Tabs(
+            ('📚 Plantillas', templates_tab),
             ('🎬 Escenarios', scenarios_tab),
             ('🔌 Conexiones', connections_tab)
         )
